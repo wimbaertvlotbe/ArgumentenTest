@@ -16,10 +16,10 @@ int main(void)
 	//volatile uint8_t reset = 3;
 	
 	DDRB=0x50; //0b01010000
-	volatile uint8_t ddbrstate = initDataDirectionRegister(&DDRB, 0x0F);
+	volatile uint8_t ddrbstate = initDataDirectionRegister(&DDRB, 0x0F);
 	volatile uint8_t portbstate = updatePortRegister(&PORTB, 0x0A);
 
-    while (1) 
+    while (1)  
     {
 		testEnResetVariabele(&waarde,max,reset);		
     }
@@ -51,11 +51,26 @@ uint8_t testEnResetVariabele(volatile uint8_t* variabele,uint8_t testwaarde,uint
  *
  *	inputs : pointer naar register, instelwaarde
  *	outputs : nieuwe toestand van het register
- *	actie : reg |= waarde 
+ *	actie : reg |= waarde
+ *  opmerking : vorige toestand wordt behouden 
  */
 volatile uint8_t updatePortRegister(uint8_t* reg, uint8_t value)
 {
 	(*reg)|=value;
+	 return (*reg);	
+}
+
+/*
+ *	Functienaam : updatePortRegister
+ *
+ *	inputs : pointer naar register, instelwaarde
+ *	outputs : nieuwe toestand van het register
+ *	actie : reg |= waarde
+ *  opmerking : vorige toestand wordt overschreven 
+ */
+volatile uint8_t initPortRegister(uint8_t* reg, uint8_t value)
+{
+	*reg =value;
 	 return (*reg);	
 }
 
@@ -73,18 +88,31 @@ volatile uint8_t readPinRegister(uint8_t* reg)
 }
 
 /*
- *	Functienaam : initDataDirectionRegister
+ *	Functienaam : updateDataDirectionRegister
  *
  *	inputs : pointer naar register, instelwaarde
  *	outputs : nieuwe toestand van het register
  *	actie : reg |= waarde
- *
+ *  opmerking : vorige toestand wordt behouden
  */
-volatile uint8_t initDataDirectionRegister(uint8_t* reg, uint8_t value)
+volatile uint8_t updateDataDirectionRegister(uint8_t* reg, uint8_t value)
 {
 	(*reg)|=value;  // *reg = *reg | value
 	 return (*reg);	
 }
 
+/*
+ *	Functienaam : initDataDirectionRegister
+ *
+ *	inputs : pointer naar register, instelwaarde
+ *	outputs : nieuwe toestand van het register
+ *	actie : reg = waarde.
+ *  opmerking : vorige toestand wordt overschreven
+ */
+volatile uint8_t initDataDirectionRegister(uint8_t* reg, uint8_t value)
+{
+	 *reg =value;  
+	 return (*reg);	
+}
 
 

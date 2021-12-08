@@ -3,29 +3,29 @@ ArgumentenTest.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  00000164  2**0
+  0 .data         00000000  00800100  00800100  00000162  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000110  00000000  00000000  00000054  2**1
+  1 .text         0000010e  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  00000164  2**0
+  2 .comment      00000030  00000000  00000000  00000162  2**0
                   CONTENTS, READONLY
   3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000194  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000038  00000000  00000000  000001d4  2**0
+  4 .debug_aranges 00000040  00000000  00000000  000001d4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000b64  00000000  00000000  0000020c  2**0
+  5 .debug_info   00000bb4  00000000  00000000  00000214  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000009e2  00000000  00000000  00000d70  2**0
+  6 .debug_abbrev 000009e2  00000000  00000000  00000dc8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000002fb  00000000  00000000  00001752  2**0
+  7 .debug_line   00000318  00000000  00000000  000017aa  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000074  00000000  00000000  00001a50  2**2
+  8 .debug_frame  00000094  00000000  00000000  00001ac4  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000050d  00000000  00000000  00001ac4  2**0
+  9 .debug_str    00000529  00000000  00000000  00001b58  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000149  00000000  00000000  00001fd1  2**0
+ 10 .debug_loc    00000171  00000000  00000000  00002081  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000028  00000000  00000000  0000211a  2**0
+ 11 .debug_ranges 00000030  00000000  00000000  000021f2  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -85,7 +85,7 @@ Disassembly of section .text:
   bc:	de bf       	out	0x3e, r29	; 62
   be:	cd bf       	out	0x3d, r28	; 61
   c0:	0e 94 66 00 	call	0xcc	; 0xcc <main>
-  c4:	0c 94 86 00 	jmp	0x10c	; 0x10c <_exit>
+  c4:	0c 94 85 00 	jmp	0x10a	; 0x10a <_exit>
 
 000000c8 <__bad_interrupt>:
   c8:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -112,78 +112,77 @@ int main(void)
 	DDRB=0x50; //0b01010000
   da:	80 e5       	ldi	r24, 0x50	; 80
   dc:	84 b9       	out	0x04, r24	; 4
- *	actie : reg |= waarde
- *
+ *	actie : reg = waarde.
+ *  opmerking : vorige toestand wordt overschreven
  */
 volatile uint8_t initDataDirectionRegister(uint8_t* reg, uint8_t value)
 {
-	(*reg)|=value;  // *reg = *reg | value
-  de:	84 b1       	in	r24, 0x04	; 4
-  e0:	8f 60       	ori	r24, 0x0F	; 15
-  e2:	84 b9       	out	0x04, r24	; 4
+	 *reg =value;  
+  de:	8f e0       	ldi	r24, 0x0F	; 15
+  e0:	84 b9       	out	0x04, r24	; 4
 	uint8_t max = 5;
 	uint8_t reset = 3;
 	//volatile uint8_t reset = 3;
 	
 	DDRB=0x50; //0b01010000
-	volatile uint8_t ddbrstate = initDataDirectionRegister(&DDRB, 0x0F);
-  e4:	8a 83       	std	Y+2, r24	; 0x02
- *	outputs : nieuwe toestand van het register
- *	actie : reg |= waarde 
+	volatile uint8_t ddrbstate = initDataDirectionRegister(&DDRB, 0x0F);
+  e2:	8a 83       	std	Y+2, r24	; 0x02
+ *	actie : reg |= waarde
+ *  opmerking : vorige toestand wordt behouden 
  */
 volatile uint8_t updatePortRegister(uint8_t* reg, uint8_t value)
 {
 	(*reg)|=value;
-  e6:	85 b1       	in	r24, 0x05	; 5
-  e8:	8a 60       	ori	r24, 0x0A	; 10
-  ea:	85 b9       	out	0x05, r24	; 5
+  e4:	85 b1       	in	r24, 0x05	; 5
+  e6:	8a 60       	ori	r24, 0x0A	; 10
+  e8:	85 b9       	out	0x05, r24	; 5
 	uint8_t reset = 3;
 	//volatile uint8_t reset = 3;
 	
 	DDRB=0x50; //0b01010000
-	volatile uint8_t ddbrstate = initDataDirectionRegister(&DDRB, 0x0F);
+	volatile uint8_t ddrbstate = initDataDirectionRegister(&DDRB, 0x0F);
 	volatile uint8_t portbstate = updatePortRegister(&PORTB, 0x0A);
-  ec:	89 83       	std	Y+1, r24	; 0x01
+  ea:	89 83       	std	Y+1, r24	; 0x01
 	
 	//De '*' operator is de dereferencing operator
 	(*variabele)++;
 	if (*variabele >= testwaarde )
 	{
 		*variabele=resetwaarde;
-  ee:	93 e0       	ldi	r25, 0x03	; 3
+  ec:	93 e0       	ldi	r25, 0x03	; 3
 uint8_t testEnResetVariabele(volatile uint8_t* variabele,uint8_t testwaarde,uint8_t resetwaarde)
 {
 	uint8_t testresultaat = 0;
 	
 	//De '*' operator is de dereferencing operator
 	(*variabele)++;
-  f0:	8b 81       	ldd	r24, Y+3	; 0x03
-  f2:	8f 5f       	subi	r24, 0xFF	; 255
-  f4:	8b 83       	std	Y+3, r24	; 0x03
+  ee:	8b 81       	ldd	r24, Y+3	; 0x03
+  f0:	8f 5f       	subi	r24, 0xFF	; 255
+  f2:	8b 83       	std	Y+3, r24	; 0x03
 	if (*variabele >= testwaarde )
-  f6:	8b 81       	ldd	r24, Y+3	; 0x03
-  f8:	85 30       	cpi	r24, 0x05	; 5
-  fa:	d0 f3       	brcs	.-12     	; 0xf0 <main+0x24>
+  f4:	8b 81       	ldd	r24, Y+3	; 0x03
+  f6:	85 30       	cpi	r24, 0x05	; 5
+  f8:	d0 f3       	brcs	.-12     	; 0xee <main+0x22>
 	{
 		*variabele=resetwaarde;
-  fc:	9b 83       	std	Y+3, r25	; 0x03
+  fa:	9b 83       	std	Y+3, r25	; 0x03
 uint8_t testEnResetVariabele(volatile uint8_t* variabele,uint8_t testwaarde,uint8_t resetwaarde)
 {
 	uint8_t testresultaat = 0;
 	
 	//De '*' operator is de dereferencing operator
 	(*variabele)++;
-  fe:	8b 81       	ldd	r24, Y+3	; 0x03
- 100:	8f 5f       	subi	r24, 0xFF	; 255
- 102:	8b 83       	std	Y+3, r24	; 0x03
+  fc:	8b 81       	ldd	r24, Y+3	; 0x03
+  fe:	8f 5f       	subi	r24, 0xFF	; 255
+ 100:	8b 83       	std	Y+3, r24	; 0x03
 	if (*variabele >= testwaarde )
- 104:	8b 81       	ldd	r24, Y+3	; 0x03
- 106:	85 30       	cpi	r24, 0x05	; 5
- 108:	98 f3       	brcs	.-26     	; 0xf0 <main+0x24>
- 10a:	f8 cf       	rjmp	.-16     	; 0xfc <main+0x30>
+ 102:	8b 81       	ldd	r24, Y+3	; 0x03
+ 104:	85 30       	cpi	r24, 0x05	; 5
+ 106:	98 f3       	brcs	.-26     	; 0xee <main+0x22>
+ 108:	f8 cf       	rjmp	.-16     	; 0xfa <main+0x2e>
 
-0000010c <_exit>:
- 10c:	f8 94       	cli
+0000010a <_exit>:
+ 10a:	f8 94       	cli
 
-0000010e <__stop_program>:
- 10e:	ff cf       	rjmp	.-2      	; 0x10e <__stop_program>
+0000010c <__stop_program>:
+ 10c:	ff cf       	rjmp	.-2      	; 0x10c <__stop_program>
