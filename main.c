@@ -70,7 +70,7 @@ volatile uint8_t updatePortRegister(uint8_t* reg, uint8_t value)
  */
 volatile uint8_t initPortRegister(uint8_t* reg, uint8_t value)
 {
-	*reg =value;
+	*reg = value;
 	 return (*reg);	
 }
 
