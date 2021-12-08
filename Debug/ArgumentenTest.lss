@@ -107,8 +107,9 @@ int main(void)
   d8:	1b 82       	std	Y+3, r1	; 0x03
 	uint8_t max = 5;
 	uint8_t reset = 3;
+	//volatile uint8_t reset = 3;
 	
-	DDRB=0x50;
+	DDRB=0x50; //0b01010000
   da:	80 e5       	ldi	r24, 0x50	; 80
   dc:	84 b9       	out	0x04, r24	; 4
  *	actie : reg |= waarde
@@ -116,19 +117,19 @@ int main(void)
  */
 volatile uint8_t initDataDirectionRegister(uint8_t* reg, uint8_t value)
 {
-	(*reg)|=value;
+	(*reg)|=value;  // *reg = *reg | value
   de:	84 b1       	in	r24, 0x04	; 4
   e0:	8f 60       	ori	r24, 0x0F	; 15
   e2:	84 b9       	out	0x04, r24	; 4
-	volatile uint8_t waarde = 0;
 	uint8_t max = 5;
 	uint8_t reset = 3;
+	//volatile uint8_t reset = 3;
 	
-	DDRB=0x50;
+	DDRB=0x50; //0b01010000
 	volatile uint8_t ddbrstate = initDataDirectionRegister(&DDRB, 0x0F);
   e4:	8a 83       	std	Y+2, r24	; 0x02
+ *	outputs : nieuwe toestand van het register
  *	actie : reg |= waarde 
- *
  */
 volatile uint8_t updatePortRegister(uint8_t* reg, uint8_t value)
 {
@@ -136,46 +137,46 @@ volatile uint8_t updatePortRegister(uint8_t* reg, uint8_t value)
   e6:	85 b1       	in	r24, 0x05	; 5
   e8:	8a 60       	ori	r24, 0x0A	; 10
   ea:	85 b9       	out	0x05, r24	; 5
-	uint8_t max = 5;
 	uint8_t reset = 3;
+	//volatile uint8_t reset = 3;
 	
-	DDRB=0x50;
+	DDRB=0x50; //0b01010000
 	volatile uint8_t ddbrstate = initDataDirectionRegister(&DDRB, 0x0F);
 	volatile uint8_t portbstate = updatePortRegister(&PORTB, 0x0A);
   ec:	89 83       	std	Y+1, r24	; 0x01
-	uint8_t testresultaat = 0;
 	
+	//De '*' operator is de dereferencing operator
 	(*variabele)++;
-	if (*variabele >= testwaarde)
+	if (*variabele >= testwaarde )
 	{
 		*variabele=resetwaarde;
   ee:	93 e0       	ldi	r25, 0x03	; 3
- */
 uint8_t testEnResetVariabele(volatile uint8_t* variabele,uint8_t testwaarde,uint8_t resetwaarde)
 {
 	uint8_t testresultaat = 0;
 	
+	//De '*' operator is de dereferencing operator
 	(*variabele)++;
   f0:	8b 81       	ldd	r24, Y+3	; 0x03
   f2:	8f 5f       	subi	r24, 0xFF	; 255
   f4:	8b 83       	std	Y+3, r24	; 0x03
-	if (*variabele >= testwaarde)
+	if (*variabele >= testwaarde )
   f6:	8b 81       	ldd	r24, Y+3	; 0x03
   f8:	85 30       	cpi	r24, 0x05	; 5
   fa:	d0 f3       	brcs	.-12     	; 0xf0 <main+0x24>
 	{
 		*variabele=resetwaarde;
   fc:	9b 83       	std	Y+3, r25	; 0x03
- */
 uint8_t testEnResetVariabele(volatile uint8_t* variabele,uint8_t testwaarde,uint8_t resetwaarde)
 {
 	uint8_t testresultaat = 0;
 	
+	//De '*' operator is de dereferencing operator
 	(*variabele)++;
   fe:	8b 81       	ldd	r24, Y+3	; 0x03
  100:	8f 5f       	subi	r24, 0xFF	; 255
  102:	8b 83       	std	Y+3, r24	; 0x03
-	if (*variabele >= testwaarde)
+	if (*variabele >= testwaarde )
  104:	8b 81       	ldd	r24, Y+3	; 0x03
  106:	85 30       	cpi	r24, 0x05	; 5
  108:	98 f3       	brcs	.-26     	; 0xf0 <main+0x24>
